@@ -47,7 +47,7 @@ class VentanaInfo(QtGui.QWidget):
     '''Constructor de una ventana de informacion
     
     Parametros:
-      texto: Texto que mostrar'a la ventana
+      texto: Texto que mostrara la ventana
     
     '''
     super(VentanaInfo, self).__init__()
@@ -192,6 +192,7 @@ class VentanaConfigOjo(QtGui.QWidget):
     for c in canales:
       desp_ch.addItem(c)
     
+    
     bot_aceptar = QtGui.QPushButton('Adquirir', self)
     
     '''grid.addWidget(tit_up, 0, 1)
@@ -223,8 +224,10 @@ class VentanaConfigOjo(QtGui.QWidget):
     self.show()
     
   def aceptar(self, ch, tasa, long):
+          QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
 	  self.ojo = DisplayOjo(str(ch), tasa, long)
 	  self.ojo.show()
+	  QtGui.QApplication.restoreOverrideCursor()
     ## Diccionarios
     #base_tiempos = {"10 Mbps":'50ns', "30 Mbps":'10ns', "70 Mbps":'5ns', "125 Mbps":'2.5ns'}
     #length = {"4":0, "8":1, "12":2, "16":3}
@@ -318,7 +321,7 @@ class DisplayOjo(QtGui.QWidget):
 		self.timer_draw = QtCore.QTimer()
 		
 		logging.basicConfig(level=logging.DEBUG) # Trazas para comprobar el correcto funcionamiento
-		self.setWindowTitle('Diagrama de ojo del canal ' + ch)
+		self.setWindowTitle('Diagrama de ojo del canal %s' % (ch,))
 		self.setWindowIcon(QtGui.QIcon('/home/debian/Desktop/lab_master/img/icono.gif'))
 		self.setFixedSize(900,700)
 		
@@ -406,8 +409,9 @@ class DisplayOjo(QtGui.QWidget):
 		
 	def actualiza_datos(self):
 		self.ax1.hold(True)
-		for i in range(len(self.lista_medidas)):
-			self.ax1.plot(self.lista_tiempo, self.lista_medidas[i], '#0b610b')
+		#for i in range(len(self.lista_medidas)):
+		#	self.ax1.plot(self.lista_tiempo, self.lista_medidas[i], '#0b610b')
+		[self.ax1.plot(self.lista_tiempo, self.lista_medidas[i], '#0b610b') for i in xrange(len(self.lista_medidas))]
 		self.ax1.hold(False)
 		self.figure.canvas.draw()
 		
@@ -415,14 +419,14 @@ class DisplayOjo(QtGui.QWidget):
 		QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
 		QtCore.QCoreApplication.processEvents()
 		valMuestreo = event.xdata
-		valUmbral = event.ydata
+		#valUmbral = event.ydata
 		
 		self.intervalo_amplitud = self.ax1.yaxis.get_data_interval()
 		
 		if (valMuestreo < 0) or (valMuestreo > self.lista_tiempo[len(self.lista_tiempo)-1]):
 			valMuestreo = self.lista_tiempo[(len(self.lista_tiempo)-1)/2]
-		if (valUmbral < self.intervalo_amplitud[0]) or (valUmbral > self.intervalo_amplitud[1]):
-			valUmbral = (self.intervalo_amplitud[0] + self.intervalo_amplitud[1]) / 2
+		#if (valUmbral < self.intervalo_amplitud[0]) or (valUmbral > self.intervalo_amplitud[1]):
+		valUmbral = (self.intervalo_amplitud[0] + self.intervalo_amplitud[1]) / 2
 		
 		logging.debug('muestreo %s umbral %s', str(valMuestreo), str(valUmbral))    
 		self.dibuja(valMuestreo, valUmbral)
@@ -436,22 +440,38 @@ class DisplayOjo(QtGui.QWidget):
 		puntoMuestreo = int(muestreo/inc_tiempo)
 		amp = []
 		
-		for i in range(len(lista_medidas)): # Guardamos los puntos entre mas y menos 25 posiciones del punto de muestreo de todas las tramas guardadas
+		'''for i in range(len(lista_medidas)): # Guardamos los puntos entre mas y menos 25 posiciones del punto de muestreo de todas las tramas guardadas
 			for j in range(-25, 25):
 				try:
 					amp.append(lista_medidas[i][puntoMuestreo + j])
 				except IndexError:
 					logging.debug('oob')
+		'''
+		for i in xrange(len(lista_medidas)): # Guardamos los puntos entre mas y menos 25 posiciones del punto de muestreo de todas las tramas guardadas
+			try:
+				[amp.append(lista_medidas[i][puntoMuestreo + j]) for j in xrange(-25, 25)]
+			except IndexError:
+				logging.debug('oob')
 		
 		# Discriminamos segun el umbral
 		val0 = []
 		val1 = []
 		
-		for i in range(len(amp)):
+		ap0 = val0.append
+		ap1 = val1.append
+		
+		for i in xrange(len(amp)):
+			if(amp[i] < umbral):
+				ap0(amp[i])
+			else:
+				ap1(amp[i])
+		
+		'''for i in range(len(amp)):
 			if(amp[i] < umbral):
 				val0.append(amp[i])
 			else:
 				val1.append(amp[i])
+		'''
 		
 		
 		# Pintamos los histogramas y las gaussianas
@@ -500,11 +520,12 @@ class DisplayOjo(QtGui.QWidget):
 		media = 0.0
 		var = 0.0
 		n = len(data)
-		for i in range(n):
-			media = media + data[i]
+		for i in xrange(n):
+			media += data[i]
 		media = media/n
-		for i in range(n):
-			var = var + math.pow(media - data[i], 2)
+		cuad = math.pow
+		for i in xrange(n):
+			var += cuad(media - data[i], 2)
 		var = math.sqrt(var / (n-1))
 		return media, var
 		
@@ -516,8 +537,9 @@ class DisplayOjo(QtGui.QWidget):
 		self.lista_medidas.append(medidas)
 		self.inc_tiempo = inc
 		self.lista_tiempo = []
-		for i in range(len(medidas)):
-			self.lista_tiempo.append(inc*i)
+		#for i in range(len(medidas)):
+		#	self.lista_tiempo.append(inc*i)
+		[self.lista_tiempo.append(inc*i) for i in xrange(len(medidas))]
 	
 	def closeEvent(self, evnt):
 		self.timer_osc.stop()

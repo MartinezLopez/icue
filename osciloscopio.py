@@ -54,7 +54,7 @@ class Osciloscopio:
     # Inicializamos el osciloscopio
     try:
       id = self.get_id()
-      self.ins = usbtmc.Instrument("USB::" + id + "::INSTR")
+      self.ins = usbtmc.Instrument("USB::%s::INSTR" % (id,))
     except ValueError:
 	  from ventana import VentanaInfo # Esta puesto aqui para evitar dependecias circulares
 	  aviso = VentanaInfo("Parece que no hay ningun osciloscopio conectado. Por favor conectelo y asegurese de que esta encendido y reinicie la aplicacion.")
@@ -71,7 +71,7 @@ class Osciloscopio:
     id = usb.read()
     id = id[23:32] #Nos quedamos con el id del fabricante y del aparato
     id = id.replace(':', '::0x') #Ajustamos el formato al que necesitamos
-    id = '0x' + id
+    id = '0x%s' % (id,)
     return id
   
   
@@ -95,7 +95,7 @@ class Osciloscopio:
     
     '''
     escala = self.sec_div[tiempo]
-    self.ins.write("HOR:SCA " + escala)
+    self.ins.write("HOR:SCA %s" % (escala,))
   
   def set_trigger(self, channel, level):
     '''Configura el nivel y modo de disparo.
@@ -107,7 +107,7 @@ class Osciloscopio:
     '''
     ch = self.canal_trigg[channel]
     
-    self.ins.write("TRIG:MAI:LEV " + str(level) + ";EDGE:SOU " + ch)
+    self.ins.write("TRIG:MAI:LEV %s;EDGE:SOU %s" % (str(level), ch))
   
   def set_vertical(self, channel, v_d, coupling, probe):
     '''Modifica los ajustes de amplitud, acoplamiento y atenuacion de la sonda de los diferentes canales del osciloscopio.
@@ -124,7 +124,7 @@ class Osciloscopio:
     acoplo = self.acoplamiento[coupling]
     att = self.atenuacion[probe]
     
-    self.ins.write(ch + ":COUP " + acoplo + ";PRO " + probe + ";VOL " + vdiv)
+    self.ins.write("%s:COUP %s;PRO %s;VOL %s" % (ch, acoplo, probe, vdiv))
   
   def get_data(self, source, start, stop, width):
     '''Obtiene los puntos que esta mostrando el osciloscopio por pantalla de un unico canal.
@@ -146,17 +146,17 @@ class Osciloscopio:
       try: # Es un manejo de la excepcion un poco largo, pero al haber varias llamadas parecidas puede fallar cualquiera y hay veces que no te das cuenta del fallo hasta el procesado de datos que hace al final
         codificacion = "RIB" #Entre 127 y -128 con un byte
         ch = self.canal[source]
-        self.ins.write(ch + ":POS 0.0") # Lleva el canal al origen
+        self.ins.write("%s:POS 0.0" % (ch,)) # Lleva el canal al origen
         if start < 1:
           start = 1
         if stop > 2500:
           stop = 2500
         prec = self.bytes_medida[width]
-        self.ins.write("DAT:ENC " + codificacion +";SOU " + ch + ";STAR " + str(start) + ";STOP " + str(stop) + ";WID " + prec)
+        self.ins.write("DAT:ENC %s;SOU %s;STAR %s;STOP %s;WID %s" % (codificacion, ch, str(start), str(stop), prec))
         
         puntos_division = 250 #2500 puntos / 10 divisiones
         incremento_tiempo = float(self.ins.ask("HOR:MAI:SCA?")) / puntos_division
-        v_div = float(self.ins.ask(ch + ":SCA?"))
+        v_div = float(self.ins.ask("%s:SCA?" % (ch,)))
         
         puntos = self.ins.ask_raw("CURV?")
         header_length = 2 + int(puntos[1]) #Calculamos el tamano de la cabecera para no cogerla
@@ -168,10 +168,7 @@ class Osciloscopio:
         else:
           escala = 25.4 #127/5
         
-        tension =[]
-        for dato in puntos:
-          dato = dato*v_div/escala
-          tension.append(dato)
+        tension = [p*v_div/escala for p in puntos]
         return tension, incremento_tiempo
       
       except Exception as e:
@@ -189,9 +186,9 @@ class Osciloscopio:
     '''
     ch = self.canal[channel]
     if(state == True):
-      self.ins.write("SEL:" + ch + " ON")
+      self.ins.write("SEL:%s ON" % (ch,))
     else:
-      self.ins.write("SEL:" + ch + " OFF")
+      self.ins.write("SEL:%s OFF" %(ch,))
   
   def get_measure(self, channel, medida):
     ''' Obtiene las medidas del osciloscipio que estan disponibles en el menu Measure.
@@ -209,9 +206,9 @@ class Osciloscopio:
     intentos = 0
     while intentos < 5:
       try:
-        self.ins.write_raw("MEASU:IMM:SOU " + ch)
+        self.ins.write_raw("MEASU:IMM:SOU %s" % (ch,))
         time.sleep(0.5)
-        self.ins.write_raw("MEASU:IMM:TYP " + tipo_medida)
+        self.ins.write_raw("MEASU:IMM:TYP %s" % (tipo_medida,))
         time.sleep(0.5)
         value = self.ins.ask_raw("MEASU:IMM:VAL?")
         value = self.formatter(value)
@@ -243,6 +240,7 @@ class Osciloscopio:
     new_exp = exp
     mult = 1
     
+    # Es una chapuza, probablemente iria mejor un diccionario o algo asi. Hay que darle una vuelta, de momento no corre prisa.
     if(exp == 'E-12'):
       mult = 1
       new_exp = 'p'
@@ -330,29 +328,29 @@ class Osciloscopio:
   def autoset(self, channel):
     ch = self.canal[channel]
     unidades = {'V':'', 'mV':'E-3'}
-    self.ins.write(ch + ":POS 0.0")
+    self.ins.write("%s:POS 0.0" % (ch,))
     self.set_vertical(channel, '50mv', "AC", "1")
     time.sleep(0.5)
     medida = self.get_measure(channel, 'vpp')
     a, b = medida.split(' ')
     a = str(float(a)/6)
     c = unidades[b]
-    self.ins.write(ch + ":VOL " + a + c)
+    self.ins.write("%s:VOL %s%s" % (ch,a,c))
   
   def set_persistence_off(self): #Se deja asi porque de momento no interesa la persistencia, pero se podria poner en cualquier momento
     self.ins.write("DIS:PERS OFF")
     
 
 
-'''
 def main(): 
-  osc = Osciloscopio("0x0699::0x0369")
-  osc.set_trigger('1', 3.5)
-  osc.set_vertical("1", "2v", "AC", "1")
-  osc.set_horizontal('250us')
-  print osc.get_data("1", 1, 150, '1')
+  osc = Osciloscopio.Instance()
+  osc.set_trigger('ext', 1)
+  osc.set_vertical("2", "500mv", "AC", "1")
+  osc.set_horizontal('50ns')
+  osc.get_data("2", 1, 1500, '1')
   
 
 if __name__ == '__main__':
   main()
-'''
+
+
