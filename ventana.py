@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#-*-coding: utf-8-*-
 #
 #  ventana.py
 #  
@@ -60,7 +61,7 @@ class VentanaInfo(QtGui.QWidget):
     win.timer.start(10000) # Se cierra automaticamente a los 10 segundos
     win.setInformativeText(texto)
     win.setWindowTitle('Aviso')
-    win.setWindowIcon(QtGui.QIcon('/home/debian/Desktop/lab_master/img/icono.gif'))
+    win.setWindowIcon(QtGui.QIcon('%s/img/icono.gif' % sys.path[0]))
     win.exec_()
 
 class VentanaAviso(QtGui.QDialog):
@@ -86,7 +87,7 @@ class VentanaAviso(QtGui.QDialog):
     self.setLayout(grid) 
     self.setGeometry(200, 200, 200, 200)
     self.setWindowTitle('Aviso')
-    self.setWindowIcon(QtGui.QIcon('/home/debian/Desktop/lab_master/img/icono.gif'))
+    self.setWindowIcon(QtGui.QIcon('%s/img/icono.gif' % sys.path[0]))
     
   def actualiza_barra(self, val):
     self.barra.setValue(val)
@@ -108,8 +109,8 @@ class VentanaPrincipal(QtGui.QWidget):
     
     grid = QtGui.QVBoxLayout()
     
-    tit_aptd1 = QtGui.QLabel('Configuracion del generador')
-    tit_aptd2 = QtGui.QLabel('Adquisicion diagrama de ojo')
+    tit_aptd1 = QtGui.QLabel(u'Configuración del generador')
+    tit_aptd2 = QtGui.QLabel(u'Adquisición diagrama de ojo')
     
     bot_a1 = QtGui.QPushButton('Ir', self)
     bot_a2 = QtGui.QPushButton('Ir', self)
@@ -137,8 +138,8 @@ class VentanaPrincipal(QtGui.QWidget):
     grid.addLayout(l3)
     
     self.setLayout(grid)
-    self.setWindowTitle('Sistemas de Comunicacion')
-    self.setWindowIcon(QtGui.QIcon('/home/debian/Desktop/lab_master/img/icono.gif'))
+    self.setWindowTitle(u'Sistemas de Comunicación')
+    self.setWindowIcon(QtGui.QIcon('%s/img/icono.gif' % sys.path[0]))
     self.setFixedSize(280,150)
     self.show()
     
@@ -219,8 +220,8 @@ class VentanaConfigOjo(QtGui.QWidget):
     bot_aceptar.clicked.connect(lambda: self.aceptar(desp_ch.currentText(), desp_tasa.currentText(), desp_long.currentText()))
     
     self.setLayout(grid)
-    self.setWindowTitle('Configuracion de la adquisicion')
-    self.setWindowIcon(QtGui.QIcon('/home/debian/Desktop/lab_master/img/icono.gif'))
+    self.setWindowTitle(u'Configuración de la adquisición')
+    self.setWindowIcon(QtGui.QIcon('%s/img/icono.gif' % sys.path[0]))
     self.show()
     
   def aceptar(self, ch, tasa, long):
@@ -322,7 +323,7 @@ class DisplayOjo(QtGui.QWidget):
 		
 		logging.basicConfig(level=logging.DEBUG) # Trazas para comprobar el correcto funcionamiento
 		self.setWindowTitle('Diagrama de ojo del canal %s' % (ch,))
-		self.setWindowIcon(QtGui.QIcon('/home/debian/Desktop/lab_master/img/icono.gif'))
+		self.setWindowIcon(QtGui.QIcon('%s/img/icono.gif' % sys.path[0]))
 		self.setFixedSize(900,700)
 		
 		# Hacemos las medidas disponibles a todo el objeto
@@ -388,7 +389,7 @@ class DisplayOjo(QtGui.QWidget):
 		self.mpl_toolbar = NavigationToolbar(self.canvas, self)
 		
 		# Boton de parada de la adquisicion
-		bot_stop = QtGui.QPushButton('Detener la adquisicion', self)
+		bot_stop = QtGui.QPushButton(u'Detener la adquisición', self)
 		bot_stop.clicked.connect(self.stopAdq)
 		
 		hbox = QtGui.QHBoxLayout()
@@ -607,8 +608,8 @@ class VentanaConfigIO(QtGui.QWidget):
     bot_aceptar.clicked.connect(lambda: self.aceptar(combo_rate1.currentText(), combo_rate2.currentText(), combo_len1.currentText(), combo_len2.currentText(), combo_sync.currentText()))
     
     self.setLayout(grid)
-    self.setWindowTitle('Configuracion del generador')
-    self.setWindowIcon(QtGui.QIcon('/home/debian/Desktop/lab_master/img/icono.gif'))
+    self.setWindowTitle(u'Configuración del generador')
+    self.setWindowIcon(QtGui.QIcon('%s/img/icono.gif' % sys.path[0]))
     self.setFixedSize(420, 130)
     self.show()
     
