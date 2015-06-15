@@ -35,7 +35,22 @@ class PowerMeter:
 	
 	def get_power(self):
 		mb = Modbus.Instance()
-		rcv_id, w, dbm = mb.read_registers(self.address, 0, 3)
+		#rcv_id, w, dbm = mb.read_registers(self.address, 0, 3)
+		
+		# It is a very fast method, so it is possible to do an average
+		# without adding a significant delay
+		dbm = 0.0
+		w = 0.0
+		itera = 10
+		for i in range(itera):
+			rcv_id, b, a = mb.read_registers(self.address, 0, 3))
+			dbm += a
+			w += b
+		dbm /= itera
+		w /= itera 
+		
+		dbm *= (-1/100.0) #Due to Arduino  Modbus library data types
+		w /= 100.0
 		
 		if rcv_id == self.mbID:
 			return dbm, w

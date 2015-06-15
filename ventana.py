@@ -690,7 +690,7 @@ class PowerMeterWindow(QtGui.QWidget):
 		
 		#dbm, w = pm.get_power()
 		
-		#'''
+		'''
 		# It is a very fast method, so it is possible to do an average
 		# without adding a significant delay
 		dbm = 0.0
@@ -702,11 +702,10 @@ class PowerMeterWindow(QtGui.QWidget):
 			w += b
 		dbm /= itera
 		w /= itera 
-		#'''
-		
 		
 		dbm = dbm * (-1/100.0) #Due to Arduino  Modbus library data types
 		w = w / 100.0
+		'''
 		
 		self.lab_pow_dBm.setText('%.2f dBm' % (dbm,))
 		self.lab_pow_w.setText(u'%.2f \u00b5W' % (w,))
