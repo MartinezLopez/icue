@@ -24,6 +24,7 @@
 import sys
 from PyQt4 import QtGui, QtCore
 from osciloscopio import Osciloscopio
+from powerMeter import PowerMeter
 #from modbus import *
 #from pines import *
 import numpy as np
@@ -111,31 +112,40 @@ class VentanaPrincipal(QtGui.QWidget):
     
     tit_aptd1 = QtGui.QLabel(u'Configuración del generador')
     tit_aptd2 = QtGui.QLabel(u'Adquisición diagrama de ojo')
+    tit_aptd3 = QtGui.QLabel(u'Medidor de potencia óptica')
     
     bot_a1 = QtGui.QPushButton('Ir', self)
     bot_a2 = QtGui.QPushButton('Ir', self)
+    bot_a3 = QtGui.QPushButton('Ir', self)
     bot_cerrar = QtGui.QPushButton('Cerrar', self)
+    
     bot_a1.setFixedSize(60,30)
     bot_a2.setFixedSize(60,30)
+    bot_a3.setFixedSize(60,30)
     bot_cerrar.setFixedSize(60,30)
     
     l1 = QtGui.QHBoxLayout()
     l2 = QtGui.QHBoxLayout()
     l3 = QtGui.QHBoxLayout()
+    l4 = QtGui.QHBoxLayout()
     
     l1.addWidget(tit_aptd1)
     l1.addWidget(bot_a1)
     l2.addWidget(tit_aptd2)
     l2.addWidget(bot_a2)
-    l3.addWidget(bot_cerrar)
+    l3.addWidget(tit_aptd3)
+    l3.addWidget(bot_a3)
+    l4.addWidget(bot_cerrar)
     
     bot_cerrar.clicked.connect(QtCore.QCoreApplication.instance().quit)
-    bot_a1.clicked.connect(lambda: self.long_trama())
-    bot_a2.clicked.connect(lambda: self.ojo())
+    bot_a1.clicked.connect(self.long_trama)
+    bot_a2.clicked.connect(self.ojo)
+    bot_a3.clicked.connect(self.power_meter)
     
     grid.addLayout(l1)
     grid.addLayout(l2)
     grid.addLayout(l3)
+    grid.addLayout(l4)
     
     self.setLayout(grid)
     self.setWindowTitle(u'Sistemas de Comunicación')
@@ -148,6 +158,9 @@ class VentanaPrincipal(QtGui.QWidget):
   
   def ojo(self):
     self.ConfOjo = VentanaConfigOjo()
+    
+  def power_meter(self):
+	  self.pm = PowerMeterWindow()
 
 class VentanaConfigOjo(QtGui.QWidget):
   
@@ -514,7 +527,7 @@ class DisplayOjo(QtGui.QWidget):
 		QtGui.QApplication.restoreOverrideCursor()
 	
 	def muestra_resultados(self, v0, sigma0, v1, sigma1, q, ber, num0, num1):
-		string = '\tv0: %-*s Sigma 0: %-*s N. muestras 0: %-*s Q: %-*s \n\n\tv1: %-*s Sigma 1: %-*s N. muestras 1: %-*s BER: %.2e' % (17, str(round(v0*1000,1))+' mV', 17, str(round(sigma0*1000,1))+' mV', 17, str(num0), 17, str(round(q,2)), 17, str(round(v1*1000,1))+' mV', 17, str(round(sigma1*1000,1))+' mV', 17, str(num1), ber)
+		string = u'\tv0: %-*s \u03c3 0: %-*s N. muestras 0: %-*s Q: %-*s \n\n\tv1: %-*s \u03c3 1: %-*s N. muestras 1: %-*s BER: %.2e' % (17, str(round(v0*1000,1))+' mV', 17, str(round(sigma0*1000,1))+' mV', 17, str(num0), 17, str(round(q,2)), 17, str(round(v1*1000,1))+' mV', 17, str(round(sigma1*1000,1))+' mV', 17, str(num1), ber)
 		self.resultados_label.setText(string)
 	
 	def media_y_varianza(self, data):
@@ -626,3 +639,74 @@ class VentanaConfigIO(QtGui.QWidget):
     pines.setLength2(length[str(len2)])
     pines.setRate2(rate[str(rate2)])
     '''
+    
+class PowerMeterWindow(QtGui.QWidget):
+	
+	def __init__(self):
+		super(PowerMeterWindow, self).__init__()
+		self.initUI()
+		
+	def initUI(self):
+		dict_wavelength = {'820 nm':1, '1300 nm':2, 'LD':3}
+		
+		meas_button = QtGui.QPushButton('Medir', self)
+		close_button = QtGui.QPushButton('Cerrar', self)
+		lab_wavelength = QtGui.QLabel('Longitud de onda')
+		self.lab_pow_dBm = QtGui.QLabel('')
+		self.lab_pow_w = QtGui.QLabel('')
+		
+		combo_wl = QtGui.QComboBox(self)
+		[combo_wl.addItem(i) for i in dict_wavelength.keys()]
+		
+		meas_button.clicked.connect(lambda: self.measurement(dict_wavelength[str(combo_wl.currentText())]))
+		close_button.clicked.connect(self.close)
+		
+		main_layout = QtGui.QVBoxLayout()
+		
+		l1 = QtGui.QHBoxLayout()
+		l2 = QtGui.QHBoxLayout()
+		l3 = QtGui.QHBoxLayout()
+		
+		l1.addWidget(lab_wavelength)
+		l1.addWidget(combo_wl)
+		l2.addWidget(self.lab_pow_dBm)
+		l2.addWidget(self.lab_pow_w)
+		l3.addStretch(1)
+		l3.addWidget(meas_button)
+		l3.addWidget(close_button)
+		
+		main_layout.addLayout(l1)
+		main_layout.addLayout(l2)
+		main_layout.addLayout(l3)
+		
+		self.setLayout(main_layout)
+		self.setWindowTitle(u'Medidor de potencia óptica')
+		self.setWindowIcon(QtGui.QIcon('%s/img/icono.gif' % sys.path[0]))
+		self.show()
+	
+	def measurement(self, wl):
+		pm = PowerMeter(0x03)
+		pm.set_lambda(wl)
+		
+		#dbm, w = pm.get_power()
+		
+		#'''
+		# It is a very fast method, so it is possible to do an average
+		# without adding a significant delay
+		dbm = 0.0
+		w = 0.0
+		itera = 10
+		for i in range(itera):
+			a,b = pm.get_power()
+			dbm += a
+			w += b
+		dbm /= itera
+		w /= itera 
+		#'''
+		
+		
+		dbm = dbm * (-1/100.0) #Due to Arduino  Modbus library data types
+		w = w / 100.0
+		
+		self.lab_pow_dBm.setText('%.2f dBm' % (dbm,))
+		self.lab_pow_w.setText(u'%.2f \u00b5W' % (w,))

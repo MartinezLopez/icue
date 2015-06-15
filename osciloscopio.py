@@ -262,13 +262,13 @@ class Osciloscopio:
       new_exp = 'n'
     if(exp == 'E-6'):
       mult = 1
-      new_exp = 'u'
+      new_exp = '\u00b5'
     if(exp == 'E-5'):
       mult = 10
-      new_exp = 'u'
+      new_exp = '\u00b5'
     if(exp == 'E-4'):
       mult = 100
-      new_exp = 'u'
+      new_exp = '\u00b5'
     if(exp == 'E-3'):
       mult = 1
       new_exp = 'm'
