@@ -688,7 +688,7 @@ class PowerMeterWindow(QtGui.QWidget):
 		pm = PowerMeter(0x03)
 		pm.set_lambda(wl)
 		
-		#dbm, w = pm.get_power()
+		dbm, w = pm.get_power()
 		
 		'''
 		# It is a very fast method, so it is possible to do an average

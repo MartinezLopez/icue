@@ -43,7 +43,7 @@ class PowerMeter:
 		w = 0.0
 		itera = 10
 		for i in range(itera):
-			rcv_id, b, a = mb.read_registers(self.address, 0, 3))
+			rcv_id, b, a = mb.read_registers(self.address, 0, 3)
 			dbm += a
 			w += b
 		dbm /= itera
