@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #-*-coding: utf-8-*-
 #
-#  main.py
+#  icue.py
 #  
 #  Author: Miguel Angel Martinez Lopez <miguelang.martinezl@gmail.com>
 #  
@@ -21,18 +21,16 @@
 #  MA 02110-1301, USA.
 #  
 
-from ventana import *
+import os, sys
+from PyQt4 import QtGui, QtCore
+from src.util import resources
+resources.setBasePath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "./res"))
+from src.gui import mainWindow
 
 def main():
-  '''Punto de entrada de la aplicacion.
-  
-  Obtiene el identificador del osciloscopio y con el crea un objeto de la clase Osciloscopio.
-  Crea un objeto de la clase VentanaPrincipal para iniciar la GUI.
-  
-  '''
   app = QtGui.QApplication(sys.argv)
   app.setStyle("cleanlooks")
-  main_window = VentanaPrincipal()
+  main_window = mainWindow.MainWindow()
   sys.exit(app.exec_())
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #-*-coding: utf-8-*-
 #
-#  modbus.py
+#  warningWindow.py
 #  
 #  Author: Miguel Angel Martinez Lopez <miguelang.martinezl@gmail.com>
 #  
@@ -19,25 +19,38 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
+#  
 
-import serial
-import modbus_tk
-import modbus_tk.defines as cst
-import modbus_tk.modbus_rtu as modbus_rtu
-from singleton import Singleton
+import sys
+from PyQt4 import QtGui, QtCore
+from src.util import resources
 
-@Singleton
-class Modbus:
+class WarningWindow(QtGui.QDialog):
+  '''
+  No button
+  '''
   
-  def __init__(self):
-    self.master = modbus_rtu.RtuMaster(serial.Serial(port="/dev/ttyAMA0", baudrate=9600, bytesize=8, parity='N', stopbits=2, xonxoff=0))
-    self.master.set_timeout(1.0)
-    self.master.set_verbose(False)
+  def __init__(self, text):
+    QtGui.QDialog.__init__(self)
+    self.setModal(True)
+    self.initUi(text)
   
-  def write_registers(self, slaveAddress, firstRegister, data):
-    self.master.execute(slaveAddress, cst.WRITE_MULTIPLE_REGISTERS, firstRegister, output_value=data)
-  
-  def read_registers(self, slaveAddress, firstRegister, numRegisters):
-    val = self.master.execute(slaveAddress, cst.READ_HOLDING_REGISTERS, firstRegister, numRegisters)
-    return val
+  def initUi(self, text):
+    grid = QtGui.QGridLayout()
+    grid.setSpacing(5)
+    
+    warn = QtGui.QLabel(text)
+    self.bar = QtGui.QProgressBar(self)
+    self.bar.setMinimum(1)
+    self.bar.setMaximum(64)
+
+    grid.addWidget(warn, 1, 1)
+    grid.addWidget(self.bar, 2, 1)
+    
+    self.setLayout(grid) 
+    self.setGeometry(200, 200, 200, 200)
+    self.setWindowTitle('Warning!')
+    self.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif'))) 
+    
+  def refresh_bar(self, val):
+    self.bar.setValue(val)

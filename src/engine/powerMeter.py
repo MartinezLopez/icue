@@ -21,7 +21,7 @@
 #  MA 02110-1301, USA.
 #  
 
-from modbus import Modbus
+from src.engine import modbus
 
 class PowerMeter:
 	
@@ -30,11 +30,11 @@ class PowerMeter:
 		self.mbID = 0x04
 		
 	def set_lambda(self, wavelength):
-		mb = Modbus.Instance()
+		mb = modbus.Modbus.Instance()
 		mb.write_registers(self.address, 3, [wavelength]) # Register for lambda is number 3 on arduino implementation
 	
 	def get_power(self):
-		mb = Modbus.Instance()
+		mb = modbus.Modbus.Instance()
 		#rcv_id, w, dbm = mb.read_registers(self.address, 0, 3)
 		
 		# It is a very fast method, so it is possible to do an average
