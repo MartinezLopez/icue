@@ -88,7 +88,7 @@ class GenConfigWindow(QtGui.QWidget):
   def accept(self, rate1, rate2, len1, len2, sync):
     length = {"4":0, "8":1, "12":2, "16":3}
     rate = {"10 Mbps":0, "30 Mbps":1, "70 Mbps":2, "125 Mbps":3}
-    syn = {'sync 1':1, 'sync 2':2, 'SoF 1':3, 'SoF 2':4}
+    syn = {'Sync 1':1, 'Sync 2':2, 'SoF 1':3, 'SoF 2':4}
     
     pins = pin.Pins.Instance()
     pins.setClock(syn[str(sync)])
