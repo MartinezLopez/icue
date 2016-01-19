@@ -56,7 +56,7 @@ class Oscilloscope:
 		self.ins = usbtmc.Instrument("USB::%s::INSTR" % (id,))
 	  except ValueError:
 		from src.gui import InfoWindow
-		warning = InfoWindow.InfoWindow("It looks like there is no oscilloscope connection.\nMake sure that it is connected or restart it and the relaunch the app")
+		warning = InfoWindow.InfoWindow("It looks like there is no oscilloscope connection.\nMake sure that it is connected or restart it and then, relaunch the app")
       
   def get_id(self):
     usb = os.popen("lsusb | grep Tektronix") #Looking for a Tektronix device
