@@ -245,7 +245,7 @@ class EyeDisplay(QtGui.QWidget):
 		var = math.sqrt(var / (n-1))
 		return avg, var
 		
-	def configure(self, ch, rate, length):
+	def configure(self, ch, _rate, _length):
 		#Dictionaries
 		timebase = {"10 Mbps":'50ns', "30 Mbps":'10ns', "70 Mbps":'5ns', "125 Mbps":'2.5ns'}
 		length = {"4":0, "8":1, "12":2, "16":3}
@@ -254,17 +254,17 @@ class EyeDisplay(QtGui.QWidget):
 		#Gen config
 		self.gen.setClock(ch)
 		if ch == '1':
-			self.gen.setLength1(length[length])
-			self.gen.setRate1(rate[rate])
+			self.gen.setLength1(length[_length])
+			self.gen.setRate1(rate[_rate])
 		else:
-			self.gen.setLength2(length[length])
-			self.gen.setRate2(rate[rate])
+			self.gen.setLength2(length[_length])
+			self.gen.setRate2(rate[_rate])
 		
 		#Scope config
 		self.osc.disp_channel(True, ch)
 		self.osc.set_display("YT")
 		self.osc.set_persistence_off()
-		self.osc.set_horizontal(timebase[str(rate)])
+		self.osc.set_horizontal(timebase[_rate])
 		self.osc.autoset(ch)
 		self.osc.set_trigger('ext5', ch)
 		

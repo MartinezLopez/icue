@@ -75,7 +75,7 @@ class EyeConfigWindow(QtGui.QWidget):
     
   def accept(self, ch, rate, length):
 		QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
-		self.eye = eyeDisplay.EyeDisplay(str(ch), rate, length)
+		self.eye = eyeDisplay.EyeDisplay(str(ch), str(rate), str(length))
 		self.eye.show()
 		QtGui.QApplication.restoreOverrideCursor()
 		
