@@ -10,9 +10,10 @@ enum {
   W,
   DBM,
   LAMBDA,
+  READ,
   HOLDING_REGS_SIZE
 };
-
+   
 unsigned int holdingRegs[HOLDING_REGS_SIZE];
 
 void setup() {
@@ -22,28 +23,26 @@ void setup() {
 
 void loop() {
   modbus_update();
-  
   power_update();
-  
 }
 
 void power_update() {
   int meas = analogRead(PIN);
-  float m;
-  float n;
-  switch(holdingRegs[LAMBDA]-256) {
+  double m;
+  double n;
+  switch(holdingRegs[LAMBDA]) {
     case 1: //820 nm
-      m = 7.53/103;
-      n = 60.8;
+      m = 0.011353;
+      n = 51.484238;
       break;
     case 2: //1300 nm
-      m = 17.0/213.0;
-      n = 70.81;
+      m = 0.014147;
+      n = 65.986571;
       break;
 
-    case 3:
-      m = 127.0/1605.0;
-      n = 84.54;
+    case 3: //LD
+      m = 0.015471;
+      n = 66.701456;
       break;
 
     default:
@@ -51,18 +50,17 @@ void power_update() {
       n = 0;
   }
   
-  int pow_dbm = (m*meas-n) * (-100);
-  int pow_w = dBm_to_nw(float(pow_dbm)/(-100.0));
+  double volts = meas*5000.0/1024.0; //in mvolts
+  double pow_dbm = (m*volts-n);
+  double pow_w = dBm_to_nw(pow_dbm);
   
-  holdingRegs[DBM] = pow_dbm;
-  holdingRegs[W] = pow_w;
+  holdingRegs[DBM] = (pow_dbm) * (-100);
+  holdingRegs[W] = pow_w * 100;
+  holdingRegs[READ] = volts;
 }
 
-int dBm_to_nw(float dBm) {
-  float expo = dBm/10.0 + 3;
+double dBm_to_nw(double dBm) {
+  double expo = dBm/10.0 + 3;
   double nw = pow(10, expo);
-  int nw_100 = nw*100.0;
-  return nw_100;
+  return nw;
 }
-
-  
