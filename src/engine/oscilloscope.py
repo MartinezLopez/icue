@@ -256,10 +256,13 @@ class Oscilloscope:
     self.set_vertical(channel, '50mv', "AC", "1")
     time.sleep(0.5)
     measure = self.get_measure(channel, 'vpp')
-    a, b = measure.split(' ')
-    a = str(float(a)/6)
-    c = units[b]
-    self.ins.write("%s:VOL %s%s" % (ch,a,c))
+    val, mag = measure.split(' ')
+    val = float(val)/6.0
+    c = units[mag]
+    if mag == 'mV' and val < 5.0:
+      val = 5 # This is made to avoid the BW limitation of the oscilloscope 
+    val = str(val)
+    self.ins.write("%s:VOL %s%s" % (ch,val,c))
   
   def set_persistence_off(self):
     self.ins.write("DIS:PERS OFF")
