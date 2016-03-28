@@ -39,6 +39,6 @@ class InfoWindow(QtGui.QWidget):
     win.timer.timeout.connect(win.close)
     win.timer.start(10000) # It is automatically closed after 10 secs
     win.setInformativeText(text)
-    win.setWindowTitle('Warning!')
+    win.setWindowTitle(self.tr('Warning!'))
     win.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif')))
     win.exec_()

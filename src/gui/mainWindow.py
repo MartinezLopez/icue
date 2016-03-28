@@ -43,18 +43,18 @@ class MainWindow(QtGui.QWidget):
     
     grid = QtGui.QVBoxLayout()
     
-    tit_aptd1 = QtGui.QLabel(u'Generator configuration')
-    tit_aptd2 = QtGui.QLabel(u'Eye diagramm')
-    tit_aptd3 = QtGui.QLabel(u'Optical power meter')
-    tit_aptd4 = QtGui.QLabel(u'FFT')
-    tit_aptd5 = QtGui.QLabel(u'Testing')
+    tit_aptd1 = QtGui.QLabel(self.tr('Generator configuration'))
+    tit_aptd2 = QtGui.QLabel(self.tr('Eye diagramm'))
+    tit_aptd3 = QtGui.QLabel(self.tr('Optical power meter'))
+    tit_aptd4 = QtGui.QLabel(self.tr('FFT'))
+    tit_aptd5 = QtGui.QLabel(self.tr('Testing'))
     
-    but_a1 = QtGui.QPushButton('Go', self)
-    but_a2 = QtGui.QPushButton('Go', self)
-    but_a3 = QtGui.QPushButton('Go', self)
-    but_a4 = QtGui.QPushButton('Go', self)
-    but_a5 = QtGui.QPushButton('Go', self)
-    but_close = QtGui.QPushButton('Close', self)
+    but_a1 = QtGui.QPushButton(self.tr('Go'), self)
+    but_a2 = QtGui.QPushButton(self.tr('Go'), self)
+    but_a3 = QtGui.QPushButton(self.tr('Go'), self)
+    but_a4 = QtGui.QPushButton(self.tr('Go'), self)
+    but_a5 = QtGui.QPushButton(self.tr('Go'), self)
+    but_close = QtGui.QPushButton(self.tr('Close'), self)
     
     but_a1.setFixedSize(60,30)
     but_a2.setFixedSize(60,30)
@@ -97,7 +97,7 @@ class MainWindow(QtGui.QWidget):
     grid.addLayout(l6)
     
     self.setLayout(grid)
-    self.setWindowTitle(u'Sistemas de Comunicación')
+    self.setWindowTitle(self.tr('ICUE'))
     self.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif')))
     self.setFixedSize(440,250)
     self.show()

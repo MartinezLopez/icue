@@ -37,9 +37,9 @@ class EyeConfigWindow(QtGui.QWidget):
     grid = QtGui.QGridLayout()
     grid.setSpacing(5)
     
-    tit_ch = QtGui.QLabel('Channel')
-    tit_rate = QtGui.QLabel('Rate')
-    tit_length = QtGui.QLabel('Length')
+    tit_ch = QtGui.QLabel(self.tr('Channel'))
+    tit_rate = QtGui.QLabel(self.tr('Rate'))
+    tit_length = QtGui.QLabel(self.tr('Length'))
     
     combo_rate = QtGui.QComboBox(self)
     combo_length = QtGui.QComboBox(self)
@@ -56,7 +56,7 @@ class EyeConfigWindow(QtGui.QWidget):
     for c in channels:
       combo_ch.addItem(c)
     
-    but_accept = QtGui.QPushButton('Acquire', self)
+    but_accept = QtGui.QPushButton(self.tr('Acquire'), self)
     
     grid.addWidget(tit_ch, 1, 1)
     grid.addWidget(tit_rate, 2, 1)
@@ -69,7 +69,7 @@ class EyeConfigWindow(QtGui.QWidget):
     but_accept.clicked.connect(lambda: self.accept(combo_ch.currentText(), combo_rate.currentText(), combo_length.currentText()))
     
     self.setLayout(grid)
-    self.setWindowTitle(u'Acquisition configuration')
+    self.setWindowTitle(self.tr('Acquisition configuration'))
     self.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif')))
     self.show()
     
@@ -78,85 +78,3 @@ class EyeConfigWindow(QtGui.QWidget):
 		self.eye = eyeDisplay.EyeDisplay(str(ch), str(rate), str(length))
 		self.eye.show()
 		QtGui.QApplication.restoreOverrideCursor()
-		
-		
-    ## Diccionarios
-    #base_tiempos = {"10 Mbps":'50ns', "30 Mbps":'10ns', "70 Mbps":'5ns', "125 Mbps":'2.5ns'}
-    #length = {"4":0, "8":1, "12":2, "16":3}
-    #rate = {"125 Mbps":3, "70 Mbps":2, "30 Mbps":1, "10 Mbps":0}
-    
-    ## Mostramos los dos canales del osciloscopio
-    #self.osc.disp_channel(True, '1')
-    #self.osc.disp_channel(True, '2')
-    
-    ## Llamada a Pines o a Modbus
-    #'''
-    #pines = PinesFPGA()
-    #pines.setClock(1)
-    
-    #pines.setLength1(length[str(long_u)])
-    #pines.setRate1(rate[str(tasa_u)])
-    
-    #pines.setLength2(length[str(long_d)])
-    #pines.setRate2(rate[str(tasa_d)])
-    #'''
-    
-    #self.osc.set_display("YT")
-    #self.osc.set_persistence_off()
-    #self.osc.set_horizontal(base_tiempos[str(tasa_u)]) #Por los qstring de qt4
-    #self.osc.autoset('1')
-    
-    ## Configuramos el disparo
-    #self.osc.set_trigger('ext', 1)
-    #aviso = VentanaAviso('La adquisicion de datos puede tardar un tiempo.\n\nEspere, por favor.')
-    #aviso.show()
-    #self.disp_ojo = DisplayOjo()
-    #lista_medidas1 = []
-    #self.disp_ojo.show()
-    
-    ## Toma 32 trazas del osciloscopio
-    #for i in range(32):
-      #aviso.actualiza_barra(i)
-      #QtCore.QCoreApplication.processEvents()
-      #medidas1 , inc_tiempo1 = self.osc.get_data('1', 250, 1750, '1')
-      #lista_medidas1.append(medidas1)
-    
-    ##pines.setClock(2)
-    #self.osc.set_horizontal(base_tiempos[str(tasa_d)]) #Por los qstring de qt4
-    #self.osc.autoset('2')
-    
-    #q = multiprocessing.Queue()
-    #p1 = multiprocessing.Process(target=self.disp_ojo.update_t1, args=(lista_medidas1, inc_tiempo1,))
-    #p1.start()
-    #p2 = multiprocessing.Process(target=self.puntos2, args=(q,))
-    #p2.start()
-    #p2.join()
-    
-    #'''lista_medidas2 = []
-    ## Toma 32 trazas del osciloscopio
-    #for i in range(32):
-      #aviso.actualiza_barra(i+32)
-      ##QtCore.QCoreApplication.processEvents()
-      #medidas2 , inc_tiempo2 = self.osc.get_data('2', 250, 1750, '1')
-      #lista_medidas2.append(medidas2)
-    #'''
-    #lista_medidas2 = q.get()
-    #inc_tiempo2 = q.get()
-    #self.disp_ojo.update_t2(lista_medidas2, inc_tiempo2)
-    
-    ## Quitamos el disiparo externo
-    #self.osc.set_trigger('1', 0)
-    
-    ##Quitamos los pines
-    ##pines.quitGPIO()
-  
-  #def puntos2(self, q):
-    #lista_medidas = []
-    ## Toma 32 trazas del osciloscopio
-    #for i in range(32):
-      ##aviso.actualiza_barra(i+32)
-      ##QtCore.QCoreApplication.processEvents()
-      #medidas2 , inc_tiempo = self.osc.get_data('2', 250, 1750, '1')
-      #lista_medidas.append(medidas2)
-    #q.put(lista_medidas)
-    #q.put(inc_tiempo)

@@ -54,7 +54,7 @@ class EyeDisplay(QtGui.QWidget):
 		self.timer_draw = QtCore.QTimer()
 		
 		logging.basicConfig(level=logging.DEBUG) 
-		self.setWindowTitle('Eye diagramm from ch %s' % (ch,))
+		self.setWindowTitle(self.tr('Eye diagramm from ch %s' % (ch,)))
 		self.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif')))
 		self.setFixedSize(900,700)
 		
@@ -84,8 +84,8 @@ class EyeDisplay(QtGui.QWidget):
 		formatter_time = EngFormatter(unit='s', places=1)
 		formatter_amp = EngFormatter(unit='v', places=1)
 		
-		self.ax1.set_xlabel('time')
-		self.ax1.set_ylabel('amplitude')
+		self.ax1.set_xlabel(self.tr('time'))
+		self.ax1.set_ylabel(self.tr('amplitude'))
 		self.ax1.xaxis.set_major_formatter(formatter_time)
 		self.ax1.yaxis.set_major_formatter(formatter_amp)
 		#self.ax1.xaxis.set_minor_locator(MultipleLocator(self.inc_tiempo_t1 * 25))
@@ -120,7 +120,7 @@ class EyeDisplay(QtGui.QWidget):
 		self.mpl_toolbar = NavigationToolbar(self.canvas, self)
 		
 		# Stop acquisition button
-		but_stop = QtGui.QPushButton(u'Stop acquiring', self)
+		but_stop = QtGui.QPushButton(self.tr('Stop acquiring'), self)
 		but_stop.clicked.connect(self.stopAdq)
 		
 		hbox = QtGui.QHBoxLayout()
@@ -192,7 +192,7 @@ class EyeDisplay(QtGui.QWidget):
 		
 		# Plotting histograms and gaussians
 		self.ax2.cla()
-		self.ax2.set_xlabel('amplitude')
+		self.ax2.set_xlabel(self.tr('amplitude'))
 		norm0, bins, patches = self.ax2.hist(val0, bins=200,range=[(5/4)*self.amp_range[0], (5/4)*self.amp_range[1]], normed=True, histtype='step', color='#8181f7', rwidth=100)
 		
 		norm1, bins, patches = self.ax2.hist(val1, bins=200,range=[(5/4)*self.amp_range[0], (5/4)*self.amp_range[1]], normed=True, histtype='step', color='#fa5858', rwidth=100)

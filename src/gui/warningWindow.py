@@ -49,7 +49,7 @@ class WarningWindow(QtGui.QDialog):
     
     self.setLayout(grid) 
     self.setGeometry(200, 200, 200, 200)
-    self.setWindowTitle('Warning!')
+    self.setWindowTitle(self.tr('Warning!'))
     self.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif'))) 
     
   def refresh_bar(self, val):
