@@ -29,6 +29,15 @@ from src.gui import mainWindow
 
 def main():
   app = QtGui.QApplication(sys.argv)
+  # Setting the language
+  #locale = QtCore.QLocale.system().name()
+  locale = 'es_ES'
+  
+  # Translation of App
+  appTranslator = QtCore.QTranslator()
+  if appTranslator.load(resources.getPath("icue_" + locale)):
+    app.installTranslator(appTranslator)
+    
   app.setStyle("cleanlooks")
   main_window = mainWindow.MainWindow()
   sys.exit(app.exec_())

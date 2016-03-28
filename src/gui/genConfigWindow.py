@@ -33,11 +33,11 @@ class GenConfigWindow(QtGui.QWidget):
     grid = QtGui.QGridLayout()
     grid.setSpacing(5)
     
-    tit_rate1 = QtGui.QLabel('Rate 1')
-    tit_rate2 = QtGui.QLabel('Rate 2')
-    tit_len1 = QtGui.QLabel('Length 1')
-    tit_len2 = QtGui.QLabel('Length 2')
-    tit_sync = QtGui.QLabel('Sync')
+    tit_rate1 = QtGui.QLabel(self.tr('Rate 1'))
+    tit_rate2 = QtGui.QLabel(self.tr('Rate 2'))
+    tit_len1 = QtGui.QLabel(self.tr('Length 1'))
+    tit_len2 = QtGui.QLabel(self.tr('Length 2'))
+    tit_sync = QtGui.QLabel(self.tr('Sync'))
     
     rates = ["10 Mbps","30 Mbps","70 Mbps","125 Mbps"]
     lengths = ["4", "8", "12", "16"]
@@ -61,7 +61,7 @@ class GenConfigWindow(QtGui.QWidget):
     combo_sync.addItem('SoF 1')
     combo_sync.addItem('SoF 2')
     
-    but_accept = QtGui.QPushButton('Ok', self)
+    but_accept = QtGui.QPushButton(self.tr('Ok'), self)
     
     grid.addWidget(tit_rate1, 1, 1)
     grid.addWidget(combo_rate1, 1, 2)
@@ -80,7 +80,7 @@ class GenConfigWindow(QtGui.QWidget):
     but_accept.clicked.connect(lambda: self.accept(combo_rate1.currentText(), combo_rate2.currentText(), combo_len1.currentText(), combo_len2.currentText(), combo_sync.currentText()))
     
     self.setLayout(grid)
-    self.setWindowTitle(u'Generator configuration')
+    self.setWindowTitle(self.tr('Generator configuration'))
     self.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif')))
     self.setFixedSize(420, 130)
     self.show()

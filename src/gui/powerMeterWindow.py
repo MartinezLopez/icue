@@ -36,9 +36,9 @@ class PowerMeterWindow(QtGui.QWidget):
 	def initUI(self):
 		dict_wavelength = {'820 nm':1, '1300 nm':2, 'LD':3}
 		
-		meas_button = QtGui.QPushButton('Measure', self)
-		close_button = QtGui.QPushButton('Close', self)
-		lab_wavelength = QtGui.QLabel('Wavelength')
+		meas_button = QtGui.QPushButton(self.tr('Measure'), self)
+		close_button = QtGui.QPushButton(self.tr('Close'), self)
+		lab_wavelength = QtGui.QLabel(self.tr('Wavelength'))
 		self.lab_pow_dBm = QtGui.QLabel('')
 		self.lab_pow_w = QtGui.QLabel('')
 		
@@ -67,7 +67,7 @@ class PowerMeterWindow(QtGui.QWidget):
 		main_layout.addLayout(l3)
 		
 		self.setLayout(main_layout)
-		self.setWindowTitle(u'Optical power meter')
+		self.setWindowTitle(self.tr('Optical power meter'))
 		self.setWindowIcon(QtGui.QIcon(resources.getPath('icono.gif')))
 		self.show()
 	
